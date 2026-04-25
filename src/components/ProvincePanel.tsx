@@ -1,5 +1,7 @@
 import { X, Wheat, Fuel, Factory, DollarSign, Shield, Building2, TrendingUp, Package, Swords } from 'lucide-react';
+import { useState } from 'react';
 import type { Country, Province } from '../lib/types';
+import { UnitProductionPanel } from './UnitProductionPanel';
 
 interface ProvincePanelProps {
   province: Province;
@@ -22,6 +24,7 @@ const RESOURCE_COLORS: Record<string, string> = {
 };
 
 export function ProvincePanel({ province, country, onClose }: ProvincePanelProps) {
+  const [showProduction, setShowProduction] = useState(false);
   const ResourceIcon = RESOURCE_ICONS[province.resource_type] ?? DollarSign;
   const resourceStyle = RESOURCE_COLORS[province.resource_type] ?? '';
 
@@ -155,6 +158,21 @@ export function ProvincePanel({ province, country, onClose }: ProvincePanelProps
           {province.lat.toFixed(2)}° {province.lat >= 0 ? 'N' : 'S'},{' '}
           {province.lng.toFixed(2)}° {province.lng >= 0 ? 'E' : 'W'}
         </div>
+
+        {/* Unit Production Toggle */}
+        <button
+          onClick={() => setShowProduction(!showProduction)}
+          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg font-medium text-sm transition-colors"
+        >
+          {showProduction ? 'Hide' : 'Show'} Unit Production
+        </button>
+
+        {/* Unit Production Panel */}
+        {showProduction && (
+          <div className="border-t border-gray-700 pt-4 -mx-4 -mb-4 px-4 pb-4">
+            <UnitProductionPanel province={province} />
+          </div>
+        )}
       </div>
     </div>
   );
