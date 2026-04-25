@@ -5,6 +5,7 @@ export type ArmyStatus = 'idle' | 'moving' | 'attacking';
 export type TransactionType = 'production' | 'transfer' | 'consumption';
 export type TransferStatus = 'pending' | 'in_transit' | 'arrived' | 'consumed';
 export type BattleOutcome = 'ongoing' | 'attacker_won' | 'defender_won' | 'draw';
+export type UnitType = 'infantry' | 'militia' | 'motorized_infantry' | 'mechanized_infantry' | 'commandos' | 'paratroopers' | 'marines' | 'snipers' | 'armored_car' | 'light_tank' | 'medium_tank' | 'heavy_tank' | 'tank_destroyer' | 'interceptor' | 'tactical_bomber' | 'strategic_bomber' | 'naval_bomber' | 'attack_bomber' | 'destroyer' | 'submarine' | 'battleship' | 'carrier' | 'nuclear_bomber' | 'missile_1' | 'nuclear_missile' | 'rocket_artillery' | 'artillery' | 'anti_tank' | 'anti_air';
 
 export interface Country {
   id: string;
@@ -141,4 +142,34 @@ export interface GeneratedCountry {
   flag_color: string;
   capital_slug: string;
   provinces: GeneratedProvince[];
+}
+
+export interface UnitTemplate {
+  id: string;
+  type: UnitType;
+  name: string;
+  emoji: string;
+  base_power: number;
+  resource_type: ResourceType;
+  production_ticks: number;
+  daily_consumption: number;
+}
+
+export interface UnitProduction {
+  id: string;
+  province_id: string;
+  unit_type: UnitType;
+  research_level: number;
+  quantity: number;
+  status: 'idle' | 'producing';
+  completion_time: string | null;
+  created_at: string;
+}
+
+export interface UnitResearch {
+  id: string;
+  country_id: string;
+  unit_type: UnitType;
+  level: number;
+  completed_at: string | null;
 }
