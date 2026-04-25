@@ -85,5 +85,21 @@ export async function seedDatabase(): Promise<{ success: boolean; message: strin
     is_global: true,
   });
 
-  return { success: true, message: `Seeded ${countries.length} countries and ${allProvinces.length} provinces.` };
+  // Seed demo armies for USA (across multiple provinces)
+  const usaProvinces = countries.find((c) => c.slug === 'usa')?.provinces ?? [];
+  const demoArmyProvinces = usaProvinces.slice(0, 5); // Capital + first 4 provinces
+  for (const p of demoArmyProvinces) {
+    const pid = provinceIdBySlug[p.slug];
+    if (pid) {
+      await supabase.from('armies').insert({
+        current_province_id: pid,
+        unit_count: p.type === 'capital' ? 500 : Math.floor(Math.random() * 200) + 50,
+        attack_power: 15,
+        defense_power: 12,
+        status: 'idle',
+      });
+    }
+  }
+
+  return { success: true, message: `Seeded ${countries.length} countries, ${allProvinces.length} provinces, and demo armies.` };
 }

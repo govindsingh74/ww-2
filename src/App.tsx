@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import { seedDatabase } from './lib/seedDatabase';
-import type { Country, Province } from './lib/types';
+import type { Country, Province, Army } from './lib/types';
 import { Header } from './components/Header';
 import { WorldMap } from './components/WorldMap';
 import { CountrySidebar } from './components/CountrySidebar';
@@ -17,6 +17,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('map');
   const [countries, setCountries] = useState<Country[]>([]);
   const [provinces, setProvinces] = useState<Province[]>([]);
+  const [armies, setArmies] = useState<Army[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSeeding, setIsSeeding] = useState(false);
@@ -40,13 +41,15 @@ export default function App() {
   async function loadData() {
     setLoading(true);
 
-    const [{ data: countriesData }, { data: provincesData }] = await Promise.all([
+    const [{ data: countriesData }, { data: provincesData }, { data: armiesData }] = await Promise.all([
       supabase.from('countries').select('*').order('name'),
       supabase.from('provinces').select('*'),
+      supabase.from('armies').select('*'),
     ]);
 
     setCountries(countriesData ?? []);
     setProvinces(provincesData ?? []);
+    setArmies(armiesData ?? []);
     setLoading(false);
   }
 
@@ -78,6 +81,7 @@ export default function App() {
                 <WorldMap
                   countries={countries}
                   provinces={provinces}
+                  armies={armies}
                   onSelectProvince={setSelectedProvince}
                   selectedProvince={selectedProvince}
                 />
@@ -98,6 +102,9 @@ export default function App() {
                   <div className="bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-400 backdrop-blur-sm">
                     <span className="text-white font-semibold">{countries.length}</span> nations &middot;{' '}
                     <span className="text-white font-semibold">{provinces.length}</span> provinces
+                    {armies.length > 0 && (
+                      <> &middot; <span className="text-green-400 font-semibold">{armies.length}</span> armies</>
+                    )}
                   </div>
                   <GameTickStatus />
                 </div>
@@ -127,7 +134,7 @@ export default function App() {
             <div className="max-w-3xl mx-auto py-8 px-4">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center">
-                  <span className="text-red-400 text-lg">⚔</span>
+                  <span className="text-red-400 text-lg">X</span>
                 </div>
                 <div>
                   <h2 className="text-white text-2xl font-bold">Battle Log</h2>
